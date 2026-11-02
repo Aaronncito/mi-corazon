@@ -23,6 +23,11 @@
 
   <canvas id="heartCanvas"></canvas>
 
+  <!-- Etiqueta de música -->
+  <audio id="bgMusic" loop>
+    <source src="cancion.mp3" type="audio/mp3">
+  </audio>
+
   <script>
     const canvas = document.getElementById('heartCanvas');
     const ctx = canvas.getContext('2d');
@@ -35,7 +40,6 @@
     const centerX = width / 2;
     const centerY = height / 2;
 
-    // 1. Precalcular todos los puntos del corazón
     const points = [];
     for (let scale = 11; scale < 17; scale++) {
       for (let i = 0; i < 120; i++) {
@@ -57,9 +61,7 @@
 
     let currentIndex = 0;
 
-    // 2. Función de animación progresiva
     function animate() {
-      // Dibuja varios fragmentos por fotograma para controlar la velocidad
       const batchSize = 1; 
       for (let b = 0; b < batchSize && currentIndex < points.length; b++) {
         const p = points[currentIndex];
@@ -67,14 +69,23 @@
         currentIndex++;
       }
 
-      // Continuar la animación si quedan puntos por dibujar
       if (currentIndex < points.length) {
         requestAnimationFrame(animate);
       }
     }
 
-    // Iniciar la animación
+    // Iniciar la animación y reproducir la música al mismo tiempo
     animate();
+    
+    const music = document.getElementById('bgMusic');
+    music.volume = 0.5; // Volumen al 50%
+    music.play().catch(() => {
+      // Los navegadores a veces bloquean el autoplay si el usuario no hace clic antes.
+      // Si pasa eso, la música sonará en cuanto la persona toque la pantalla.
+      document.addEventListener('click', () => {
+        music.play();
+      }, { once: true });
+    });
   </script>
 
 </body>
